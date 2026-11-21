@@ -5662,12 +5662,17 @@
     "Copilot@WaitAfterLeakAbandon": {
         "algorithm": "JustReturn",
         "maxTimes": 50,
-        "exceededNext": ["Copilot@BattleStartPreFlag", "Copilot@LeakAbandonEndOfAction"],
+        "exceededNext": [
+            "Copilot@BattleStartPreFlag",
+            "Copilot@LeakAbandonEndOfAction",
+            "Copilot@BattleStartPreFlag-Return"
+        ],
         "next": [
             "Copilot@BattleStartPreFlag",
             "Copilot@LeakAbandonEndOfAction",
             "Copilot@LeakAbandonFightMissionFailed",
             "Copilot@ConfirmLeakAbandon",
+            "Copilot@BattleStartPreFlag-Return",
             "#self"
         ]
     },
