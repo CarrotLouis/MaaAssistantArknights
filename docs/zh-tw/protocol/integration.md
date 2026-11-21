@@ -1218,6 +1218,17 @@ Tag 等級（大於等於 3）對應的期望招募時限（單位：分鐘）�
 - `is_raid`：是否切換為突襲模式，選填，預設為 `false`。
 
 :::  
+::: field max_failure_retries  
+@type number  
+@optional  
+確認完全失敗（0 星）後，每個關卡允許的額外重試次數。省略此參數時關閉重試，0 表示無限重試。多作業模式下，重試次數用完後繼續執行剩餘作業。  
+:::  
+::: field continue_on_two_stars  
+@type boolean  
+@default false  
+@optional  
+僅在多作業模式下有效。開啟後，二星通關時會跳過佇列中該關卡的後續突襲作業，並繼續執行剩餘作業。  
+:::  
 ::: field loop_times  
 @type number  
 @default 1  

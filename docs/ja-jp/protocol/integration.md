@@ -1217,6 +1217,17 @@ Sarkaz テーマ、Investment モード、 ｢破棘成金分隊｣ または �
 - `is_raid`: 強襲作戦モードに切り替えるかどうか。可選、デフォルト false
 
 :::  
+::: field max_failure_retries  
+@type number  
+@optional  
+作戦失敗（星 0）の確認後に各ステージを再試行する回数。省略すると無効、0 は無制限です。マルチジョブモードでは、上限に達すると残りのジョブを実行します。  
+:::  
+::: field continue_on_two_stars  
+@type boolean  
+@default false  
+@optional  
+マルチジョブモードでのみ有効。星 2 でクリアしたステージの後続の強襲作戦をスキップし、残りのジョブを実行します。  
+:::  
 ::: field loop_times  
 @type number  
 @default 1  

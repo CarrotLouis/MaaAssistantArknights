@@ -1,8 +1,12 @@
 #include "CopilotTask.h"
 
+#include <algorithm>
+#include <cstdint>
+
 #include "Arknights-Tile-Pos/TileCalc2.hpp"
 
 #include "Common/AsstBattleDef.h"
+#include "Config/GeneralConfig.h"
 #include "Config/Miscellaneous/BattleDataConfig.h"
 #include "Config/Miscellaneous/CopilotConfig.h"
 #include "Config/Miscellaneous/OperBoxDataConfig.h"
@@ -63,7 +67,7 @@ bool asst::CopilotTask::set_params(const json::value& params)
     using SupportUnitUsage = BattleFormationTask::SupportUnitUsage;
     using OperUsageGroups = battle::copilot::OperUsageGroups;
 
-    if (m_has_subtasks_duplicate) {
+    if (m_params_locked) {
         Log.error(__FUNCTION__, "CopilotTask set_params failed, already set params");
         return false;
     }
@@ -99,9 +103,18 @@ bool asst::CopilotTask::set_params(const json::value& params)
         return false;
     }
 
+    const auto max_failure_retries = params.find<int>("max_failure_retries");
+    if (params.contains("max_failure_retries") && (!max_failure_retries || *max_failure_retries < 0)) {
+        LogError << __FUNCTION__ << "max_failure_retries must be a non-negative integer";
+        return false;
+    }
+    const bool use_copilot_list = !filename_opt && multi_tasks_opt.has_value();
+    const bool continue_on_two_stars = use_copilot_list && params.get("continue_on_two_stars", false);
+    const bool manage_battle_result = max_failure_retries.has_value() || continue_on_two_stars;
+
     if (filename_opt) {
         m_multi_copilot_plugin_ptr->set_enable(false);
-        m_battle_task_ptr->set_wait_until_end(false);
+        m_battle_task_ptr->set_wait_until_end(manage_battle_result);
         auto copilot_opt = parse_copilot_filename(*filename_opt);
         if (!copilot_opt) {
             return false;
@@ -130,6 +143,10 @@ bool asst::CopilotTask::set_params(const json::value& params)
         m_multi_copilot_plugin_ptr->set_enable(true); // 启用多任务插件, 自动覆盖Copilot中的配置
         m_battle_task_ptr->set_wait_until_end(true);
         auto configs = static_cast<std::vector<MultiCopilotConfig>>(*multi_tasks_opt);
+        if (configs.empty()) {
+            LogError << __FUNCTION__ << "copilot_list must contain at least one stage";
+            return false;
+        }
         std::vector<MultiCopilotTaskPlugin::MultiCopilotConfig> configs_cvt;
         std::unordered_map<std::string, std::shared_ptr<OperUsageGroups>> operbox_assignments;
         for (const auto& [id, filename, nav_name, is_raid] : configs) {
@@ -175,16 +192,9 @@ bool asst::CopilotTask::set_params(const json::value& params)
             configs_cvt.emplace_back(std::move(config_cvt));
         }
 
-        size_t count = configs_cvt.size();
-        // 追加任务
-        m_subtasks.reserve(m_subtasks.size() * count);
-        // 保存原始大小
-        size_t original_size = m_subtasks.size();
-        for (size_t i = 1; i < count; ++i) {
-            m_subtasks.insert(m_subtasks.end(), m_subtasks.begin(), m_subtasks.begin() + original_size);
-        }
+        const size_t count = configs_cvt.size();
         m_multi_copilot_plugin_ptr->set_multi_copilot_config(std::move(configs_cvt));
-        m_has_subtasks_duplicate = true;
+        m_multi_copilot_plugin_ptr->set_stage_index(0);
 
         for (const auto& obj : *multi_tasks_opt) {
             if (obj.contains("is_paradox")) {
@@ -193,6 +203,14 @@ bool asst::CopilotTask::set_params(const json::value& params)
                 LogError << "Please use 'ParadoxCopilotTask' for paradox copilot;";
                 Log.error("================  !DEPRECATED!  ================");
                 return false;
+            }
+        }
+
+        if (!manage_battle_result) {
+            const auto stage_tasks = m_subtasks;
+            m_subtasks.reserve(stage_tasks.size() * count);
+            for (size_t i = 1; i < count; ++i) {
+                m_subtasks.insert(m_subtasks.end(), stage_tasks.begin(), stage_tasks.end());
             }
         }
     }
@@ -227,33 +245,126 @@ bool asst::CopilotTask::set_params(const json::value& params)
 
     m_battle_task_ptr->set_formation_task_ptr(m_formation_task_ptr->get_opers_in_formation());
 
-    size_t loop_times = params.get("loop_times", 1);
-    if (m_multi_copilot_plugin_ptr->get_enable()) {
-        // 如果没三星就中止
-        // 悖论模拟不需要强制三星，因为练度等关系有概率不过，反正不消耗理智，走单独的退出逻辑
-        // EDIT: UI 上取消勾选需要按顺序，非三星通关会导致取消的内容错误
-        /* if (m_paradox_task_ptr->get_enable()) {
-             m_stop_task_ptr->set_tasks({ "ClickCornerUntilReturnButton" });
-         }
-         else {
-             m_stop_task_ptr->set_tasks({ "Copilot@WaitUntilEndOfAction" });
-         }*/
-        m_stop_task_ptr->set_tasks({ "Copilot@WaitUntilEndOfAction" }); // 带三星检查
+    const int loop_times = params.get("loop_times", 1);
+    m_use_copilot_list = use_copilot_list;
+    m_continue_on_two_stars = continue_on_two_stars;
+    m_max_failure_retries = max_failure_retries;
+    m_managed_stage_count = 0;
+    m_stop_task_ptr->set_enable(false);
+    if (manage_battle_result) {
+        m_managed_stage_count =
+            use_copilot_list ? multi_tasks_opt->size() : static_cast<size_t>(std::max(1, loop_times));
+    }
+    else if (use_copilot_list) {
+        m_stop_task_ptr->set_tasks({ "Copilot@WaitUntilEndOfAction" });
         m_stop_task_ptr->set_enable(true);
     }
     else if (loop_times > 1) {
         m_stop_task_ptr->set_tasks({ "ClickCornerUntilStartButton" });
         m_stop_task_ptr->set_enable(true);
 
-        // 追加
-        m_subtasks.reserve(m_subtasks.size() * loop_times);
-        size_t original_size = m_subtasks.size();
-        for (size_t i = 1; i < loop_times; ++i) {
-            m_subtasks.insert(m_subtasks.end(), m_subtasks.begin(), m_subtasks.begin() + original_size);
+        const auto stage_tasks = m_subtasks;
+        m_subtasks.reserve(stage_tasks.size() * static_cast<size_t>(loop_times));
+        for (int i = 1; i < loop_times; ++i) {
+            m_subtasks.insert(m_subtasks.end(), stage_tasks.begin(), stage_tasks.end());
         }
-        m_has_subtasks_duplicate = true;
+    }
+    m_params_locked = use_copilot_list || loop_times > 1;
+    return true;
+}
+
+bool asst::CopilotTask::run()
+{
+    if (!m_enable || m_managed_stage_count == 0) {
+        return InterfaceTask::run();
+    }
+
+    std::vector<bool> skipped_stages(m_managed_stage_count);
+    for (size_t i = 0; i < m_managed_stage_count; ++i) {
+        if (!skipped_stages[i] && !run_managed_stage(i, skipped_stages)) {
+            return false;
+        }
     }
     return true;
+}
+
+bool asst::CopilotTask::run_managed_stage(size_t index, std::vector<bool>& skipped_stages)
+{
+    constexpr std::string_view Failed = "Copilot@BattleResultFailed";
+    constexpr std::string_view FailureConfirmed = "Copilot@BattleFailureConfirmed";
+    constexpr std::string_view ThreeStars = "Copilot@BattleResultThreeStars";
+    constexpr std::string_view Adverse = "Copilot@BattleResultAdverse";
+    constexpr std::string_view TwoStars = "Copilot@BattleResultTwoStars";
+    constexpr std::string_view Sandbox = "Copilot@BattleResultSandbox";
+
+    m_multi_copilot_plugin_ptr->set_enable(m_use_copilot_list);
+    const auto* config = m_use_copilot_list ? &m_multi_copilot_plugin_ptr->get_config(index) : nullptr;
+    for (std::uint64_t retries = 0; !need_exit(); ++retries) {
+        m_multi_copilot_plugin_ptr->set_stage_index(index);
+        if (!InterfaceTask::run() || need_exit()) {
+            return false;
+        }
+
+        ProcessTask settlement(*this, { "Copilot@WaitForBattleResult" });
+        if (!settlement.run() || need_exit()) {
+            return false;
+        }
+        const auto& result = settlement.get_last_task_name();
+        const bool failed = result == Failed || result == FailureConfirmed;
+        const bool two_stars = result == TwoStars;
+        if (!failed && !two_stars && result != ThreeStars && result != Adverse && result != Sandbox) {
+            LogError << __FUNCTION__ << "Could not recognize the battle result" << result;
+            return false;
+        }
+        if ((failed && !m_max_failure_retries) || (two_stars && config && !m_continue_on_two_stars)) {
+            return false;
+        }
+        const bool retry =
+            failed && (*m_max_failure_retries == 0 || retries < static_cast<std::uint64_t>(*m_max_failure_retries));
+
+        if (config || failed || index + 1 < m_managed_stage_count) {
+            ProcessTask return_to_stage(*this, { "Copilot@ClickCornerUntilStartButton" });
+            return_to_stage.set_times_limit("Copilot@ClickCornerUntilStartButton", 15);
+            if (!return_to_stage.run() || need_exit()) {
+                return false;
+            }
+            const auto& page = return_to_stage.get_last_task_name();
+            if (page != "Copilot@BattleStartPreFlag" && page != "Copilot@BattleStartPreFlag-Return") {
+                LogError << __FUNCTION__ << "Could not leave the battle results";
+                return false;
+            }
+        }
+
+        if (result != Sandbox) {
+            json::array skipped_raid_ids;
+            if (two_stars && config && !config->is_raid) {
+                for (size_t i = index + 1; i < m_managed_stage_count; ++i) {
+                    const auto& queued = m_multi_copilot_plugin_ptr->get_config(i);
+                    if (!skipped_stages[i] && queued.is_raid && queued.nav_name == config->nav_name) {
+                        skipped_stages[i] = true;
+                        skipped_raid_ids.emplace_back(queued.id);
+                    }
+                }
+            }
+
+            auto info = basic_info_with_what("CopilotBattleResult");
+            auto& details = info["details"];
+            details["id"] = config ? config->id : -1;
+            details["stage_name"] = config ? config->nav_name : m_stage_name;
+            details["stars"] = failed ? 0 : two_stars ? 2 : 3;
+            details["retry_number"] = retry ? retries + 1 : 0;
+            details["skipped_raid_ids"] = std::move(skipped_raid_ids);
+            callback(AsstMsg::SubTaskExtraInfo, info);
+        }
+
+        if (!retry) {
+            return !failed || config != nullptr;
+        }
+        if (!sleep(Config.get_options().task_delay)) {
+            return false;
+        }
+    }
+    return false;
 }
 
 std::optional<std::filesystem::path> asst::CopilotTask::parse_copilot_filename(const std::string& name)

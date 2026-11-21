@@ -2773,6 +2773,40 @@ public class AsstProxy
                 }
                 break;
 
+            case "CopilotBattleResult" when subTaskDetails is not null:
+                {
+                    var copilot = Instances.CopilotViewModel;
+                    var completedId = subTaskDetails.Value<int>("id");
+                    var stage = subTaskDetails.Value<string>("stage_name") ?? string.Empty;
+                    var stars = subTaskDetails.Value<int>("stars");
+                    if (stars == 0)
+                    {
+                        var retry = subTaskDetails.Value<long>("retry_number");
+                        var key = retry > 0 ? "Asst.Copilot.RetryFailedBattle" : "Asst.Copilot.FailureRetriesExhausted";
+                        copilot.AddLog(LocalizationHelper.GetStringFormat(key, stage, retry), UiLogColor.Warning);
+                    }
+                    else if (stars == 2)
+                    {
+                        var skippedRaidIds = subTaskDetails["skipped_raid_ids"]?.Values<int>().ToHashSet() ?? [];
+                        if (completedId >= 0)
+                        {
+                            copilot.CompleteTwoStarCopilotTask(completedId, skippedRaidIds);
+                        }
+
+                        var key = skippedRaidIds.Count > 0 ? "Asst.Copilot.TwoStarsSkipRaid" : "Asst.Copilot.TwoStars";
+                        copilot.AddLog(LocalizationHelper.GetStringFormat(key, stage), UiLogColor.Info);
+                    }
+                    else if (stars == 3)
+                    {
+                        if (completedId >= 0)
+                        {
+                            copilot.CopilotTaskSuccess(completedId);
+                        }
+                        copilot.AddLog(LocalizationHelper.GetString("Asst.Copilot.CompleteCombat"), UiLogColor.Info);
+                    }
+                    break;
+                }
+
             case "SSSStage":
                 Instances.CopilotViewModel.AddLog(LocalizationHelper.GetStringFormat("Asst.Copilot.CurrentStage", subTaskDetails!["stage"]), UiLogColor.Info);
                 break;

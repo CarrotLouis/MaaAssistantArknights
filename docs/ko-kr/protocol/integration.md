@@ -1219,6 +1219,17 @@ Sarkaz 테마, Investment 모드, "연금술 분대" 또는 "지원 분대"일 �
 - `is_raid`: 하드 모드 전환 여부, 선택 사항, 기본값 false
 
 :::  
+::: field max_failure_retries  
+@type number  
+@optional  
+작전 실패(별 0개)가 확인된 후 스테이지별로 추가 재시도할 수 있는 횟수입니다. 생략하면 비활성화되며, 0은 무제한입니다. 다중 작업 모드에서는 재시도 횟수를 모두 쓰면 남은 작업을 실행합니다.  
+:::  
+::: field continue_on_two_stars  
+@type boolean  
+@default false  
+@optional  
+다중 작업 모드에서만 적용됩니다. 별 2개로 클리어하면 대기열에서 해당 스테이지의 이후 강습 작전을 건너뛰고 나머지 작업을 실행합니다.  
+:::  
 ::: field loop_times  
 @type number  
 @default 1  

@@ -67,6 +67,10 @@ public class AsstCopilotTask : AsstBaseTask
     /// </summary>
     public bool UseSanityPotion { get; set; }
 
+    public int? MaxFailureRetries { get; set; }
+
+    public bool ContinueOnTwoStars { get; set; }
+
     /// <summary>
     /// Gets or sets 干员识别数据文件路径
     /// </summary>
@@ -101,6 +105,10 @@ public class AsstCopilotTask : AsstBaseTask
         else if (MultiTasks.Count > 0)
         {
             taskParams["copilot_list"] = JArray.FromObject(MultiTasks);
+            if (ContinueOnTwoStars)
+            {
+                taskParams["continue_on_two_stars"] = true;
+            }
         }
         else if (!string.IsNullOrEmpty(FileName))
         {
@@ -109,6 +117,11 @@ public class AsstCopilotTask : AsstBaseTask
         else
         {
             throw new ArgumentException("Either FileName or MultiTasks must be provided");
+        }
+
+        if (MaxFailureRetries is int maxFailureRetries)
+        {
+            taskParams["max_failure_retries"] = maxFailureRetries;
         }
 
         if (FormationIndex > 0)

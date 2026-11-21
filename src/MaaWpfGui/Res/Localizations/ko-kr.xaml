@@ -388,6 +388,7 @@
     <system:String x:Key="Asst.Copilot.CurrentStage">현재 스테이지: {0}</system:String>
     <system:String x:Key="Asst.Copilot.CurrentSteps">현재 단계: {0} {1}</system:String>
     <system:String x:Key="Asst.Copilot.ElapsedTime">경과 시간: {0}ms</system:String>
+    <system:String x:Key="Asst.Copilot.FailureRetriesExhausted">{0} 작전 실패. 재시도 횟수를 모두 사용했습니다.</system:String>
     <system:String x:Key="Asst.Copilot.MissingOperators">다음 {key=Game.Operator} 그룹의 {key=Game.Operator}를 보유하고 있지 않거나 작업 요구 사항을 충족하지 않습니다 (그룹당 1명이면 충분합니다):\n{0}｢선호｣ 표시는 {key=Game.Operator} 인식에 영향을 줄 수 있습니다. 실제로 보유하고 있다면 표시를 해제한 후 다시 시도하거나, ｢{key=Copilot.AutoSquad}｣를 끄고 직접 편성하세요. 실제로 보유하지 않은 경우 부족한 그룹이 1개뿐이라면 ｢{key=Copilot.SupportUnitUsage}｣로 대체할 수 있고, 2개 이상이라면 다른 작업 파일을 사용해 주세요.</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable" xml:space="preserve">사용 불가 {key=Game.Operator}: {0}, 사유: {1}</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable.Elite">정예화 수준이 너무 낮음</system:String>
@@ -397,7 +398,10 @@
     <system:String x:Key="Asst.Copilot.Operbox1Unmatched" xml:space="preserve">{key=Game.Operator}(그룹) {0}에 일치하는 {key=Game.Operator} 없음, 지원 유닛이 필요합니다(사전 매칭 추천: {1}, 실제 선택은 지원 유닛 목록에 따름)</system:String>
     <system:String x:Key="Asst.Copilot.OperboxDataParseFailed">{key=OperBox.Title} 데이터 분석 실패</system:String>
     <system:String x:Key="Asst.Copilot.OperboxMatched">사전 매칭된 {key=Game.Operator}(그룹):</system:String>
+    <system:String x:Key="Asst.Copilot.RetryFailedBattle">{0} 작전 실패. {1}번째 재시도를 시작합니다.</system:String>
     <system:String x:Key="Asst.Copilot.SSSGamePass">보안 파견 클리어!</system:String>
+    <system:String x:Key="Asst.Copilot.TwoStars">{0}을(를) 별 2개로 클리어했습니다.</system:String>
+    <system:String x:Key="Asst.Copilot.TwoStarsSkipRaid">{0}을(를) 별 2개로 클리어하여 해당 스테이지의 강습 작전을 건너뛰었습니다.</system:String>
     <system:String x:Key="Asst.Copilot.UnsupportedLevel">지원되지 않는 스테이지입니다. 스테이지 이름을 확인하거나 ｢{key=Settings.Title} - {key=Settings.Update.Title} - {key=Settings.Update.ResourceUpdate}｣ 로 이동하여 리소스 버전을 업데이트해 보세요!</system:String>
     <system:String x:Key="Asst.Copilot.UnsupportedStages">미지원 스테이지 {0}. 신규 이벤트 스테이지인 경우 지도 리소스 업데이트 후 자동 전투를 사용할 수 있습니다</system:String>
     <system:String x:Key="Asst.Copilot.UserAdditionalNameInvalid">추가된 커스텀 {key=Game.Operator} 이름이 유효하지 않음: {0}, 철자를 확인하세요</system:String>
@@ -975,6 +979,7 @@ C:\Program Files\Netease\MuMuPlayer으로 입력해야 합니다.
     <system:String x:Key="Copilot.AutoSquad.Tip">자동 편성은 ｢선호｣ 설정 된 {key=Game.Operator}를 인식할 수 없습니다</system:String>
     <system:String x:Key="Copilot.ClearTask" xml:space="preserve">좌클릭으로 모든 작업 지우기
 우클릭으로 비활성 작업 지우기</system:String>
+    <system:String x:Key="Copilot.ContinueOnTwoStars">별 2개로 클리어한 뒤 남은 작업 계속</system:String>
     <system:String x:Key="Copilot.CouldNotSaveFile" xml:space="preserve">부조종사 작업을 파일에 저장할 수 없습니다.: </system:String>
     <system:String x:Key="Copilot.DirectiveECTerm">에너지 기어:</system:String>
     <system:String x:Key="Copilot.DoYouLikeThisWebJson">이 작업 파일이 마음에 드셨나요? 평가해 주세요!</system:String>
@@ -1000,6 +1005,7 @@ C:\Program Files\Netease\MuMuPlayer으로 입력해야 합니다.
     <system:String x:Key="Copilot.MainStage">메인</system:String>
     <system:String x:Key="Copilot.MainStageAndSideStory">{key=Copilot.MainStage} / {key=Copilot.StoryCollection} / {key=Copilot.SideStory}</system:String>
     <system:String x:Key="Copilot.MapPrts">Copilot 맵과 좌표</system:String>
+    <system:String x:Key="Copilot.MaxFailureRetries">스테이지별 최대 재시도 횟수 (0 = 무제한)</system:String>
     <system:String x:Key="Copilot.Module">모듈</system:String>
     <system:String x:Key="Copilot.NetworkServiceError">네트워크 요청 중 오류가 발생했습니다!</system:String>
     <system:String x:Key="Copilot.NoFound">해당 파일을 찾을 수 없습니다!</system:String>
@@ -1010,6 +1016,8 @@ C:\Program Files\Netease\MuMuPlayer으로 입력해야 합니다.
     <system:String x:Key="Copilot.ParadoxSimulation">패러독스</system:String>
     <system:String x:Key="Copilot.PasteClipboard.Tip">클립보드에서 읽어 작업/작업 세트 자동 인식</system:String>
     <system:String x:Key="Copilot.PrtsPlus">Copilot 전략 공유 웹사이트</system:String>
+    <system:String x:Key="Copilot.RetryOnFailure">실패 시 자동 재시도</system:String>
+    <system:String x:Key="Copilot.RetryOnFailure.Tip">작전 실패(별 0개)가 확인된 경우에만 재시도합니다. 다중 작업 모드에서는 재시도 횟수를 모두 쓰면 남은 작업을 실행합니다.</system:String>
     <system:String x:Key="Copilot.SSS">보안 파견</system:String>
     <system:String x:Key="Copilot.SelectFile.Tip">마우스로 작업 파일을 드래그해 선택할 수 있어요 (oﾟvﾟ)ノ</system:String>
     <system:String x:Key="Copilot.SelectTask.Tip" xml:space="preserve">좌클릭: 해당 작업 정보 보기

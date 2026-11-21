@@ -1217,6 +1217,17 @@ Tag 等级（大于等于 3）和对应的希望招募时限，单位为分钟�
 - `is_raid`: 是否切换为突袭模式，可选，默认值 false
 
 :::  
+::: field max_failure_retries  
+@type number  
+@optional  
+确认完全失败（0 星）后，每个关卡允许的额外重试次数。省略此参数时关闭重试，0 表示无限重试。多作业模式下，重试次数用完后继续执行剩余作业。  
+:::  
+::: field continue_on_two_stars  
+@type boolean  
+@default false  
+@optional  
+仅在多作业模式下有效。开启后，二星通关时跳过该关卡在队列中的后续突袭作业，并继续执行剩余作业。  
+:::  
 ::: field loop_times  
 @type number  
 @default 1  

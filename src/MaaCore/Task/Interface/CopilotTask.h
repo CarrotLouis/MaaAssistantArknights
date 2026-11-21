@@ -33,11 +33,13 @@ public:
     virtual ~CopilotTask() override = default;
 
     virtual bool set_params(const json::value& params) override;
+    virtual bool run() override;
 
     std::string get_stage_name() const { return m_stage_name; }
 
 private:
     std::optional<std::filesystem::path> parse_copilot_filename(const std::string& name);
+    bool run_managed_stage(size_t index, std::vector<bool>& skipped_stages);
 
     std::shared_ptr<MultiCopilotTaskPlugin> m_multi_copilot_plugin_ptr = nullptr;
     std::shared_ptr<ProcessTask> m_medicine_task_ptr = nullptr;
@@ -45,6 +47,10 @@ private:
     std::shared_ptr<BattleProcessTask> m_battle_task_ptr = nullptr;
     std::shared_ptr<ProcessTask> m_stop_task_ptr = nullptr;
     std::string m_stage_name;
-    bool m_has_subtasks_duplicate = false;
+    std::optional<int> m_max_failure_retries;
+    size_t m_managed_stage_count = 0;
+    bool m_use_copilot_list = false;
+    bool m_continue_on_two_stars = false;
+    bool m_params_locked = false;
 };
 }

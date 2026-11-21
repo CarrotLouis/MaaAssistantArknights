@@ -388,6 +388,7 @@
     <system:String x:Key="Asst.Copilot.CurrentStage">現在のステージ: {0}</system:String>
     <system:String x:Key="Asst.Copilot.CurrentSteps">現在の手順: {0} {1}</system:String>
     <system:String x:Key="Asst.Copilot.ElapsedTime">経過時間: {0}ms</system:String>
+    <system:String x:Key="Asst.Copilot.FailureRetriesExhausted">{0} で作戦失敗。再試行回数の上限に達しました。</system:String>
     <system:String x:Key="Asst.Copilot.MissingOperators">以下の{key=Game.Operator}グループの{key=Game.Operator}を所有していません（各グループ1体で足ります）または作業要件を満たしていません：\n{0} ｢戦術要員｣ マークは{key=Game.Operator}の認識に影響する可能性があります。実際に所有している場合は、マークを解除して再試行するか、｢{key=Copilot.AutoSquad}｣ をオフにして手動で補充してください。実際に所有していない場合は、不足グループが1つなら ｢{key=Copilot.SupportUnitUsage}｣ で補えますが、2つ以上の場合は他の作業ファイルを使用してください。</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable" xml:space="preserve">{key=Game.Operator}が使用できません: {0}、理由: {1}</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable.Elite">エリート度が低すぎる</system:String>
@@ -397,7 +398,10 @@
     <system:String x:Key="Asst.Copilot.Operbox1Unmatched" xml:space="preserve">{key=Game.Operator}（グループ） {0} に一致する{key=Game.Operator}なし、サポートが必要です（事前マッチングでは{1}を想定、実際はサポート一覧から選択されます）</system:String>
     <system:String x:Key="Asst.Copilot.OperboxDataParseFailed">{key=OperBox.Title}データ解析失敗</system:String>
     <system:String x:Key="Asst.Copilot.OperboxMatched">事前マッチした{key=Game.Operator}（グループ）：</system:String>
+    <system:String x:Key="Asst.Copilot.RetryFailedBattle">{0} で作戦失敗。{1} 回目の再試行を開始します。</system:String>
     <system:String x:Key="Asst.Copilot.SSSGamePass">ゲームクリア、おめでとうございます！</system:String>
+    <system:String x:Key="Asst.Copilot.TwoStars">{0} を星 2 でクリアしました。</system:String>
+    <system:String x:Key="Asst.Copilot.TwoStarsSkipRaid">{0} を星 2 でクリアしたため、該当ステージの強襲作戦をスキップしました。</system:String>
     <system:String x:Key="Asst.Copilot.UnsupportedLevel">サポートされていないステージです。ステージ名を確認するか、｢{key=Settings.Title} - {key=Settings.Update.Title} - {key=Settings.Update.ResourceUpdate}｣ に移動してリソースバージョンを更新してみてください！</system:String>
     <system:String x:Key="Asst.Copilot.UnsupportedStages">未サポートステージ {0}。新イベントのステージの場合は、マップリソースの更新を待ってから自動戦闘を使用してください</system:String>
     <system:String x:Key="Asst.Copilot.UserAdditionalNameInvalid">追加のカスタム{key=Game.Operator}名が無効です: {0}、スペルを確認してください</system:String>
@@ -977,6 +981,7 @@ C:\Program Files\Netease\MuMuPlayer を入力してください。
     <system:String x:Key="Copilot.AutoSquad.Tip">自動編成では、一時的に ｢戦術要員｣ {key=Game.Operator}を認識できません</system:String>
     <system:String x:Key="Copilot.ClearTask" xml:space="preserve">左クリックですべてのタスクをクリア
 右クリックで非アクティブなタスクをクリア</system:String>
+    <system:String x:Key="Copilot.ContinueOnTwoStars">星 2 クリア後も残りのジョブを実行</system:String>
     <system:String x:Key="Copilot.CouldNotSaveFile" xml:space="preserve">コパイロットタスクをファイルに保存できませんでした: </system:String>
     <system:String x:Key="Copilot.DirectiveECTerm">拡張式戦術ユニット：</system:String>
     <system:String x:Key="Copilot.DoYouLikeThisWebJson">この攻略ファイルは好きですか？評価してください！</system:String>
@@ -1002,6 +1007,7 @@ C:\Program Files\Netease\MuMuPlayer を入力してください。
     <system:String x:Key="Copilot.MainStage">メインテーマ</system:String>
     <system:String x:Key="Copilot.MainStageAndSideStory">{key=Copilot.MainStage}/{key=Copilot.StoryCollection}/{key=Copilot.SideStory}</system:String>
     <system:String x:Key="Copilot.MapPrts">自動指揮マップの制作</system:String>
+    <system:String x:Key="Copilot.MaxFailureRetries">ステージごとの最大再試行回数（0 は無制限）</system:String>
     <system:String x:Key="Copilot.Module">モジュール</system:String>
     <system:String x:Key="Copilot.NetworkServiceError">ネットワークサービスの要求中にエラーが発生しました！</system:String>
     <system:String x:Key="Copilot.NoFound">対応する攻略ファイルが見つかりません！</system:String>
@@ -1012,6 +1018,8 @@ C:\Program Files\Netease\MuMuPlayer を入力してください。
     <system:String x:Key="Copilot.ParadoxSimulation">逆理演算</system:String>
     <system:String x:Key="Copilot.PasteClipboard.Tip">クリップボードを読み取り、作業/作業セットを自動識別</system:String>
     <system:String x:Key="Copilot.PrtsPlus">自動攻略ファイルシェアWebサイト</system:String>
+    <system:String x:Key="Copilot.RetryOnFailure">失敗した作戦を自動で再試行</system:String>
+    <system:String x:Key="Copilot.RetryOnFailure.Tip">作戦失敗（星 0）を確認した場合のみ再試行します。マルチジョブモードでは、上限に達すると残りのジョブを実行します。</system:String>
     <system:String x:Key="Copilot.SSS">保全駐在</system:String>
     <system:String x:Key="Copilot.SelectFile.Tip">攻略ファイルはマウスで直接ドラッグして取り込むことがきます(oﾟvﾟ)ノ</system:String>
     <system:String x:Key="Copilot.SelectTask.Tip" xml:space="preserve">左クリック：ジョブ情報を表示

@@ -44,4 +44,10 @@ public partial class Copilot : NotifyPropertyChangedWithValue
     public int SelectFormation { get; set; } = 1;
 
     public int LoopTimes { get; set; } = 1;
+
+    public bool RetryOnFailure { get; set; }
+
+    public int MaxFailureRetries { get; set; } = 1;
+
+    public bool ContinueOnTwoStars { get; set; }
 }

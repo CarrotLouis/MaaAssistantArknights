@@ -1217,6 +1217,17 @@ Each object contains:
 - `is_raid`: Whether to switch to Challenge Mode (Raid), optional, default false
 
 :::  
+::: field max_failure_retries  
+@type number  
+@optional  
+Number of additional attempts per stage after a confirmed zero-star defeat. Omit to disable retries. Set to 0 for unlimited retries. In multi-copilot mode, the remaining jobs run when retries are exhausted.  
+:::  
+::: field continue_on_two_stars  
+@type boolean  
+@default false  
+@optional  
+Applies only in multi-copilot mode. After a two-star clear, skip later Challenge Mode jobs for that stage and continue with the rest of the queue.  
+:::  
 ::: field loop_times  
 @type number  
 @default 1  

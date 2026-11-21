@@ -388,6 +388,7 @@
     <system:String x:Key="Asst.Copilot.CurrentStage">Current Stage: {0}</system:String>
     <system:String x:Key="Asst.Copilot.CurrentSteps">Step: {0} {1}</system:String>
     <system:String x:Key="Asst.Copilot.ElapsedTime">Elapsed time: {0}ms</system:String>
+    <system:String x:Key="Asst.Copilot.FailureRetriesExhausted">{0} ended in defeat. No retries remain.</system:String>
     <system:String x:Key="Asst.Copilot.MissingOperators">None of the {key=Game.Operator}s in the following groups are owned or satisfy the job requirements (only one is needed per group):\n{0}｢Favourite｣ marks may affect {key=Game.Operator} recognition; if the {key=Game.Operator}s are actually owned, you can remove the mark and retry, or turn off ｢{key=Copilot.AutoSquad}｣ and add them manually. If they are really not owned, use ｢{key=Copilot.SupportUnitUsage}｣ when only one group is missing, or use another job when two or more are missing.</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable" xml:space="preserve">{key=Game.Operator} unavailable: {0}, reason: {1}</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable.Elite">Elite too low</system:String>
@@ -397,7 +398,10 @@
     <system:String x:Key="Asst.Copilot.Operbox1Unmatched" xml:space="preserve">{key=Game.Operator} (group) {0} has no matching {key=Game.Operator}, a support unit is needed (pre-matching suggests {1}; the actual pick follows the support unit list)</system:String>
     <system:String x:Key="Asst.Copilot.OperboxDataParseFailed">{key=OperBox.Title} data parse failed</system:String>
     <system:String x:Key="Asst.Copilot.OperboxMatched">Pre-matched {key=Game.Operator} (groups):</system:String>
+    <system:String x:Key="Asst.Copilot.RetryFailedBattle">{0} ended in defeat. Starting retry {1}.</system:String>
     <system:String x:Key="Asst.Copilot.SSSGamePass">Game cleared! congratulations!</system:String>
+    <system:String x:Key="Asst.Copilot.TwoStars">{0} cleared with two stars.</system:String>
+    <system:String x:Key="Asst.Copilot.TwoStarsSkipRaid">{0} cleared with two stars. Skipped the matching Challenge Mode jobs.</system:String>
     <system:String x:Key="Asst.Copilot.UnsupportedLevel">Unsupported stage, please check the stage name or go to ｢{key=Settings.Title} - {key=Settings.Update.Title} - {key=Settings.Update.ResourceUpdate}｣ and try updating the resource version!</system:String>
     <system:String x:Key="Asst.Copilot.UnsupportedStages">Unsupported stage {0}. If this is a stage from a new event, please wait for the map resource update before using auto-combat</system:String>
     <system:String x:Key="Asst.Copilot.UserAdditionalNameInvalid">Additional custom {key=Game.Operator} name invalid: {0}, please check spelling</system:String>
@@ -974,6 +978,7 @@ Right click to add challenge difficulty</system:String>
     <system:String x:Key="Copilot.AutoSquad.Tip">｢Favourite｣ marked {key=Game.Operator}s may not be recognized</system:String>
     <system:String x:Key="Copilot.ClearTask" xml:space="preserve">Left-click to clear all jobs
 Right-click to clear inactive jobs</system:String>
+    <system:String x:Key="Copilot.ContinueOnTwoStars">Continue after a two-star clear</system:String>
     <system:String x:Key="Copilot.CouldNotSaveFile" xml:space="preserve">Could not save copilot task to file: </system:String>
     <system:String x:Key="Copilot.DirectiveECTerm">Directive EC unit:&#160;</system:String>
     <system:String x:Key="Copilot.DoYouLikeThisWebJson">Do you like this task file? Rate it!</system:String>
@@ -999,6 +1004,7 @@ Operators' Elite level CANNOT be ignored. If any requirements are ignored, the o
     <system:String x:Key="Copilot.MainStage">Main Theme</system:String>
     <system:String x:Key="Copilot.MainStageAndSideStory">{key=Copilot.MainStage} / {key=Copilot.StoryCollection} / {key=Copilot.SideStory}</system:String>
     <system:String x:Key="Copilot.MapPrts">Copilot Map and Coordinate</system:String>
+    <system:String x:Key="Copilot.MaxFailureRetries">Max retries per stage (0 = unlimited)</system:String>
     <system:String x:Key="Copilot.Module">Module</system:String>
     <system:String x:Key="Copilot.NetworkServiceError">Network service error!</system:String>
     <system:String x:Key="Copilot.NoFound">No corresponding file found!</system:String>
@@ -1009,6 +1015,8 @@ Operators' Elite level CANNOT be ignored. If any requirements are ignored, the o
     <system:String x:Key="Copilot.ParadoxSimulation">Paradox Simulation</system:String>
     <system:String x:Key="Copilot.PasteClipboard.Tip">Read clipboard, auto-detect job/job set</system:String>
     <system:String x:Key="Copilot.PrtsPlus">Copilot JSON sharing site</system:String>
+    <system:String x:Key="Copilot.RetryOnFailure">Retry failed battles</system:String>
+    <system:String x:Key="Copilot.RetryOnFailure.Tip">Retry only after a confirmed 0-star defeat. In multi-copilot mode, move on to the remaining jobs when retries run out.</system:String>
     <system:String x:Key="Copilot.SSS">SSS</system:String>
     <system:String x:Key="Copilot.SelectFile.Tip">Task files can be imported by dragging the mouse</system:String>
     <system:String x:Key="Copilot.SelectTask.Tip" xml:space="preserve">Left-click: view job details

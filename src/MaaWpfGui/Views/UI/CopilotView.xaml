@@ -495,6 +495,36 @@
                                     <controls:TooltipBlock TooltipText="{DynamicResource Copilot.UseList.Tip}" />
                                 </StackPanel>
 
+                                <StackPanel Visibility="{c:Binding 'CopilotTabIndex == 0'}">
+                                    <StackPanel Margin="0,5" Orientation="Horizontal">
+                                        <CheckBox MaxWidth="163" IsChecked="{Binding RetryOnFailure}">
+                                            <TextBlock Text="{DynamicResource Copilot.RetryOnFailure}" TextWrapping="Wrap" />
+                                        </CheckBox>
+                                        <controls:TooltipBlock TooltipText="{DynamicResource Copilot.RetryOnFailure.Tip}" />
+                                    </StackPanel>
+                                    <StackPanel Margin="12,0,0,5" Visibility="{c:Binding RetryOnFailure}">
+                                        <controls:TextBlock Text="{DynamicResource Copilot.MaxFailureRetries}" TextWrapping="Wrap" />
+                                        <hc:NumericUpDown
+                                            Width="84"
+                                            Height="24"
+                                            HorizontalAlignment="Left"
+                                            AutomationProperties.Name="{DynamicResource Copilot.MaxFailureRetries}"
+                                            DecimalPlaces="0"
+                                            InputMethod.IsInputMethodEnabled="False"
+                                            Maximum="2147483647"
+                                            Minimum="0"
+                                            Value="{Binding MaxFailureRetries}" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <CheckBox
+                                    MaxWidth="178"
+                                    Margin="0,5"
+                                    IsChecked="{Binding ContinueOnTwoStars}"
+                                    Visibility="{c:Binding 'UseCopilotList and CopilotTabIndex == 0'}">
+                                    <TextBlock Text="{DynamicResource Copilot.ContinueOnTwoStars}" TextWrapping="Wrap" />
+                                </CheckBox>
+
                                 <!--  UseSanityPotion  -->
                                 <CheckBox
                                     Margin="0,5"

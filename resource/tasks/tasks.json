@@ -5568,6 +5568,69 @@
         "template": "StageDrops-Stars-Adverse.png",
         "next": ["Copilot@ClickCornerUntilStartButton"]
     },
+    "Copilot@WaitForBattleResult": {
+        "algorithm": "JustReturn",
+        "maxTimes": 50,
+        "exceededNext": ["Copilot@DetectBattleResult"],
+        "next": [
+            "Copilot@SkipPlotForBattleResult",
+            "Copilot@DetectBattleResult",
+            "Copilot@BattleResultSandbox",
+            "Copilot@DetectBattleFailure",
+            "#self"
+        ]
+    },
+    "Copilot@SkipPlotForBattleResult": {
+        "baseTask": "Copilot@SkipThePreBattlePlot",
+        "template": "SkipThePreBattlePlot.png",
+        "next": ["Copilot@ConfirmSkipPlotForBattleResult", "#self"]
+    },
+    "Copilot@ConfirmSkipPlotForBattleResult": {
+        "baseTask": "Copilot@SkipThePreBattlePlotConfirm",
+        "template": "SkipThePreBattlePlotConfirm.png",
+        "next": ["Copilot@WaitForBattleResult"]
+    },
+    "Copilot@DetectBattleResult": {
+        "baseTask": "Copilot@EndOfAction",
+        "template": "EndOfAction.png",
+        "next": [
+            "Copilot@BattleResultFailed",
+            "Copilot@BattleResultThreeStars",
+            "Copilot@BattleResultAdverse",
+            "Copilot@BattleResultTwoStars"
+        ]
+    },
+    "Copilot@BattleResultThreeStars": {
+        "baseTask": "StageDrops-Stars-3",
+        "template": "StageDrops-Stars-3.png"
+    },
+    "Copilot@BattleResultAdverse": {
+        "baseTask": "StageDrops-Stars-Adverse",
+        "template": "StageDrops-Stars-Adverse.png"
+    },
+    "Copilot@BattleResultTwoStars": {
+        "baseTask": "StageDrops-Stars-2",
+        "template": "StageDrops-Stars-2.png"
+    },
+    "Copilot@BattleResultFailed": {
+        "Doc": "结算页的理智返还图标，识别已跳过任务失败弹窗的 0 星结算",
+        "template": "CopilotSanityRefund.png",
+        "templThreshold": 0.9,
+        "roi": [65, 500, 140, 145]
+    },
+    "Copilot@DetectBattleFailure": {
+        "baseTask": "Copilot@FightMissionFailed",
+        "next": ["Copilot@BattleFailureConfirmed"]
+    },
+    "Copilot@BattleFailureConfirmed": {
+        "baseTask": "Copilot@EndOfAction",
+        "template": "EndOfAction.png",
+        "next": []
+    },
+    "Copilot@BattleResultSandbox": {
+        "baseTask": "Copilot@EndOfAction-Sandbox",
+        "next": []
+    },
     "Copilot@EndOfAction-Sandbox": {
         "algorithm": "OcrDetect",
         "text": ["MISSION", "RESULTS"],

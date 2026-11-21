@@ -30,6 +30,10 @@ public:
 
     void set_multi_copilot_config(std::vector<MultiCopilotConfig> config) { m_copilot_configs = std::move(config); }
 
+    void set_stage_index(size_t index) { m_index_current = index; }
+
+    const auto& get_config(size_t index) const { return m_copilot_configs.at(index); }
+
     void set_battle_task_ptr(const std::shared_ptr<BattleProcessTask>& ptr) { m_battle_task_ptr = ptr; }
 
     void set_formation_task_ptr(const std::shared_ptr<BattleFormationTask>& ptr) { m_formation_task_ptr = ptr; }
@@ -46,7 +50,7 @@ private:
     bool confirm_stage_name(const cv::Mat& image, const std::string& stage_name);
 
     std::vector<MultiCopilotConfig> m_copilot_configs;
-    int m_index_current = 0; // 当前执行的索引
+    size_t m_index_current = 0; // 当前执行的索引
     std::shared_ptr<BattleProcessTask> m_battle_task_ptr = nullptr;
     std::shared_ptr<BattleFormationTask> m_formation_task_ptr = nullptr;
     int m_max_retry = 20;

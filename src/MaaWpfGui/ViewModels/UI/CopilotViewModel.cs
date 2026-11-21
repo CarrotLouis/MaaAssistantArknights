@@ -581,6 +581,30 @@ public partial class CopilotViewModel : Screen
 
     public bool UseSanityPotion { get => field; set => SetAndNotify(ref field, value); }
 
+    public bool RetryOnFailure
+    {
+        get; set {
+            SetAndNotify(ref field, value);
+            ConfigFactory.CurrentConfig.Copilot.RetryOnFailure = value;
+        }
+    } = ConfigFactory.CurrentConfig.Copilot.RetryOnFailure;
+
+    public int MaxFailureRetries
+    {
+        get; set {
+            SetAndNotify(ref field, Math.Max(0, value));
+            ConfigFactory.CurrentConfig.Copilot.MaxFailureRetries = field;
+        }
+    } = Math.Max(0, ConfigFactory.CurrentConfig.Copilot.MaxFailureRetries);
+
+    public bool ContinueOnTwoStars
+    {
+        get; set {
+            SetAndNotify(ref field, value);
+            ConfigFactory.CurrentConfig.Copilot.ContinueOnTwoStars = value;
+        }
+    } = ConfigFactory.CurrentConfig.Copilot.ContinueOnTwoStars;
+
     /// <summary>
     /// Gets or sets a value indicating whether to use auto-formation.
     /// </summary>
@@ -2033,24 +2057,42 @@ public partial class CopilotViewModel : Screen
     /// <summary>
     /// 战斗列表的当前战斗任务成功
     /// </summary>
-    public void CopilotTaskSuccess()
+    /// <param name="id">作业列表条目 ID。未提供时沿用当前作业 ID。</param>
+    public void CopilotTaskSuccess(int? id = null)
     {
+        var completedId = id ?? CurrentCopilotId;
+        var hasRequirementIgnored = HasRequirementIgnored;
         Execute.OnUIThread(() => {
             foreach (var model in CopilotItemViewModels)
             {
-                if (!model.IsChecked || (CurrentCopilotId != -1 && model.Index != CurrentCopilotId))
+                if (!model.IsChecked || (completedId != -1 && model.Index != completedId))
                 {
                     continue;
                 }
 
                 model.IsChecked = false;
 
-                if (model.CopilotId > 0 && _copilotIdList.Remove(model.CopilotId) && _copilotIdList.IndexOf(model.CopilotId) == -1 && !HasRequirementIgnored)
+                if (model.CopilotId > 0 && _copilotIdList.Remove(model.CopilotId) && _copilotIdList.IndexOf(model.CopilotId) == -1 && !hasRequirementIgnored)
                 {
                     _ = RateCopilot(model.CopilotId);
                 }
 
                 break;
+            }
+
+            SaveCopilotTask();
+        });
+    }
+
+    public void CompleteTwoStarCopilotTask(int id, IReadOnlySet<int> skippedRaidIds)
+    {
+        Execute.OnUIThread(() => {
+            foreach (var model in CopilotItemViewModels)
+            {
+                if (model.Index == id || (model.IsRaid && skippedRaidIds.Contains(model.Index)))
+                {
+                    model.IsChecked = false;
+                }
             }
 
             SaveCopilotTask();
@@ -2289,6 +2331,8 @@ public partial class CopilotViewModel : Screen
                 IgnoreRequirements = IgnoreRequirements,
                 UserAdditionals = AddUserAdditional ? [.. userAdditional] : [],
                 UseSanityPotion = UseSanityPotion,
+                MaxFailureRetries = RetryOnFailure ? MaxFailureRetries : null,
+                ContinueOnTwoStars = ContinueOnTwoStars,
                 FormationIndex = UseFormation ? FormationIndex : 0,
                 OperBoxDataPath = EffectiveOperBoxAssist ? OperBoxAssistHelper.OperBoxDataJsonPath : string.Empty,
             };
@@ -2345,6 +2389,7 @@ public partial class CopilotViewModel : Screen
                 UserAdditionals = AddUserAdditional ? [.. userAdditional] : [],
                 LoopTimes = Loop ? LoopTimes : 1,
                 UseSanityPotion = false,
+                MaxFailureRetries = CopilotTabIndex == 0 && RetryOnFailure ? MaxFailureRetries : null,
                 FormationIndex = UseFormation ? FormationIndex : 0,
                 OperBoxDataPath = EffectiveOperBoxAssist ? OperBoxAssistHelper.OperBoxDataJsonPath : string.Empty,
             };

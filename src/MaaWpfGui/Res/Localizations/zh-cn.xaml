@@ -389,6 +389,7 @@
     <system:String x:Key="Asst.Copilot.CurrentStage">当前关卡: {0}</system:String>
     <system:String x:Key="Asst.Copilot.CurrentSteps">当前步骤: {0} {1}</system:String>
     <system:String x:Key="Asst.Copilot.ElapsedTime">当前计时器: {0}ms</system:String>
+    <system:String x:Key="Asst.Copilot.FailureRetriesExhausted">{0} 完全失败，已用完重试次数。</system:String>
     <system:String x:Key="Asst.Copilot.MissingOperators">以下{key=Game.Operator}组内的{key=Game.Operator}均未拥有（每组只需其一）或未达到作业要求：\n{0} ｢特别关注｣ 可能影响{key=Game.Operator}识别，若实际已拥有，可移除 ｢特别关注｣ 后重试，或关闭 ｢{key=Copilot.AutoSquad}｣ 手动补充；若确实未拥有，仅缺一组时可使用 ｢{key=Copilot.SupportUnitUsage}｣，缺两组以上请更换作业。</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable" xml:space="preserve">{key=Game.Operator}不可用: {0}, 原因: {1}</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable.Elite">精英化不足</system:String>
@@ -398,7 +399,10 @@
     <system:String x:Key="Asst.Copilot.Operbox1Unmatched" xml:space="preserve">{key=Game.Operator}（组） {0} 没有匹配的{key=Game.Operator}，需要借助战（预匹配建议 {1}，实际按助战列表选择）</system:String>
     <system:String x:Key="Asst.Copilot.OperboxDataParseFailed">{key=OperBox.Title}数据解析失败</system:String>
     <system:String x:Key="Asst.Copilot.OperboxMatched">预匹配的{key=Game.Operator}（组）：</system:String>
+    <system:String x:Key="Asst.Copilot.RetryFailedBattle">{0} 完全失败，开始第 {1} 次重试。</system:String>
     <system:String x:Key="Asst.Copilot.SSSGamePass">保全通关啦！</system:String>
+    <system:String x:Key="Asst.Copilot.TwoStars">{0} 二星通关。</system:String>
+    <system:String x:Key="Asst.Copilot.TwoStarsSkipRaid">{0} 二星通关，已跳过对应的突袭作业。</system:String>
     <system:String x:Key="Asst.Copilot.UnsupportedLevel">不支持的关卡，请检查关卡名或前往 ｢{key=Settings.Title} - {key=Settings.Update.Title} - {key=Settings.Update.ResourceUpdate}｣ 尝试更新资源版本！</system:String>
     <system:String x:Key="Asst.Copilot.UnsupportedStages">不支持的关卡 {0}，如果是新活动的关卡，请等待地图资源更新后再使用自动战斗</system:String>
     <system:String x:Key="Asst.Copilot.UserAdditionalNameInvalid">追加自定{key=Game.Operator}名称无效: {0}，请检查拼写</system:String>
@@ -975,6 +979,7 @@ C:\Program Files\Netease\MuMuPlayer。
     <system:String x:Key="Copilot.AutoSquad.Tip">自动编队可能无法识别带有 ｢特别关注｣ 标记的{key=Game.Operator}</system:String>
     <system:String x:Key="Copilot.ClearTask" xml:space="preserve">左键清除所有任务
 右键清除未激活任务</system:String>
+    <system:String x:Key="Copilot.ContinueOnTwoStars">二星通关后继续执行剩余任务</system:String>
     <system:String x:Key="Copilot.CouldNotSaveFile" xml:space="preserve">无法保存作业文件到: </system:String>
     <system:String x:Key="Copilot.DirectiveECTerm">导能原件：</system:String>
     <system:String x:Key="Copilot.DoYouLikeThisWebJson">作业怎么样？评价下吧！</system:String>
@@ -1000,6 +1005,7 @@ C:\Program Files\Netease\MuMuPlayer。
     <system:String x:Key="Copilot.MainStage">主线</system:String>
     <system:String x:Key="Copilot.MainStageAndSideStory">{key=Copilot.MainStage}/{key=Copilot.StoryCollection}/{key=Copilot.SideStory}</system:String>
     <system:String x:Key="Copilot.MapPrts">自动战斗地图坐标</system:String>
+    <system:String x:Key="Copilot.MaxFailureRetries">单关卡最大重试次数（0 为无限）</system:String>
     <system:String x:Key="Copilot.Module">模组</system:String>
     <system:String x:Key="Copilot.NetworkServiceError">请求网络服务错误！</system:String>
     <system:String x:Key="Copilot.NoFound">未找到对应作业！</system:String>
@@ -1010,6 +1016,8 @@ C:\Program Files\Netease\MuMuPlayer。
     <system:String x:Key="Copilot.ParadoxSimulation">悖论模拟</system:String>
     <system:String x:Key="Copilot.PasteClipboard.Tip">读取剪贴板，自动识别作业/作业集</system:String>
     <system:String x:Key="Copilot.PrtsPlus">自动战斗作业分享</system:String>
+    <system:String x:Key="Copilot.RetryOnFailure">失败自动重试</system:String>
+    <system:String x:Key="Copilot.RetryOnFailure.Tip">仅在确认关卡完全失败（0 星）后重试。多作业模式下，重试次数用完后继续执行剩余作业。</system:String>
     <system:String x:Key="Copilot.SSS">保全派驻</system:String>
     <system:String x:Key="Copilot.SelectFile.Tip">作业文件可以直接用鼠标拖进来哦 (oﾟvﾟ)ノ</system:String>
     <system:String x:Key="Copilot.SelectTask.Tip" xml:space="preserve">左键：查看作业信息
