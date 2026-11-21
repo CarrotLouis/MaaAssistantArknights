@@ -42,6 +42,8 @@ protected:
 
     virtual bool do_strategic_action(const cv::Mat& reusable = cv::Mat());
 
+    virtual bool battle_interrupted([[maybe_unused]] const cv::Mat& image) { return false; }
+
     bool calc_tiles_info(const std::string& stage_name, double shift_x = 0, double shift_y = 0);
 
     bool pause();

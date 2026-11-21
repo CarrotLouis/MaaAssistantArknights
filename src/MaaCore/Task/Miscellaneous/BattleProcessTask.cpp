@@ -1,5 +1,6 @@
 #include "BattleProcessTask.h"
 
+#include <algorithm>
 #include <chrono>
 #include <future>
 #include <ranges>
@@ -42,6 +43,9 @@ bool asst::BattleProcessTask::_run()
     }
 
     if (!update_deployment(true)) {
+        if (m_enemy_leaked) {
+            return abandon_leaked_battle();
+        }
         Log.error("update deployment failed");
         return false;
     }
@@ -54,11 +58,11 @@ bool asst::BattleProcessTask::_run()
         do_action(action, i);
     }
 
-    if (need_to_wait_until_end()) {
+    if (!m_enemy_leaked && need_to_wait_until_end()) {
         wait_until_end(true, need_strategy_during_wait());
     }
 
-    return true;
+    return !m_enemy_leaked || abandon_leaked_battle();
 }
 
 void asst::BattleProcessTask::clear()
@@ -67,6 +71,50 @@ void asst::BattleProcessTask::clear()
 
     m_oper_in_group.clear();
     m_in_bullet_time = false;
+    m_enemy_leaked = false;
+}
+
+bool asst::BattleProcessTask::battle_interrupted(const cv::Mat& image)
+{
+    if (m_enemy_leaked) {
+        return true;
+    }
+    if (!m_retry_on_leak || need_exit() || image.empty()) {
+        return false;
+    }
+
+    Matcher damage(image);
+    damage.set_task_info("BattleHpFlag2");
+    damage.set_log_tracing(false);
+    auto match = damage.analyze();
+    if (!match) {
+        return false;
+    }
+    const auto color = cv::mean(image(make_rect<cv::Rect>(match->rect)));
+    // 模板匹配可能命中同形状的蓝白色图标，再核对红色分量。
+    if (color[2] - std::max(color[0], color[1]) <= 30 || !check_pause_button(image)) {
+        return false;
+    }
+
+    LogInfo << "Enemy leak detected; abandoning the battle";
+    m_in_battle = false;
+    m_enemy_leaked = true;
+    return true;
+}
+
+bool asst::BattleProcessTask::abandon_leaked_battle()
+{
+    ProcessTask abandon(
+        *this,
+        { "Copilot@PauseBeforeLeakAbandon",
+          "Copilot@LeakAbandonEndOfAction",
+          "Copilot@LeakAbandonFightMissionFailed" });
+    abandon.set_times_limit("Copilot@ClickCornerUntilStartButton", 15);
+    if (!abandon.run() || need_exit()) {
+        return false;
+    }
+    const auto& page = abandon.get_last_task_name();
+    return page == "Copilot@BattleStartPreFlag" || page == "Copilot@BattleStartPreFlag-Return";
 }
 
 bool asst::BattleProcessTask::set_stage_name(const std::string& stage_name)
@@ -237,9 +285,15 @@ bool asst::BattleProcessTask::do_action(const battle::copilot::Action& action, s
 
     if (action.pre_delay > 0) {
         sleep_and_do_strategy(action.pre_delay);
+        if (m_enemy_leaked || need_exit()) {
+            return false;
+        }
         if (action.type == ActionType::Deploy) {
             update_deployment(); // 等待之后画面可能会变化, 更新下干员信息, 但若为非部署动作, 则无需更新
         }
+    }
+    if (m_enemy_leaked) {
+        return false;
     }
 
     bool ret = false;
@@ -569,7 +623,7 @@ bool asst::BattleProcessTask::wait_condition(const Action& action)
         }
     }
 
-    return true;
+    return !m_enemy_leaked;
 }
 
 bool asst::BattleProcessTask::enter_bullet_time(
@@ -594,6 +648,10 @@ void asst::BattleProcessTask::sleep_and_do_strategy(unsigned millisecond)
     using namespace std::chrono_literals;
     const auto start = std::chrono::steady_clock::now();
     const auto delay = millisecond * 1ms;
+
+    if (m_enemy_leaked) {
+        return;
+    }
 
     cv::Mat image = ctrler()->get_image();
     while (!need_exit() && check_in_battle(image) && std::chrono::steady_clock::now() - start < delay) {

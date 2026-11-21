@@ -269,6 +269,9 @@ bool asst::BattleHelper::update_deployment(bool init, const cv::Mat& reusable, b
     }
 
     cv::Mat image = init || reusable.empty() ? m_inst_helper.ctrler()->get_image() : reusable;
+    if (battle_interrupted(image)) {
+        return false;
+    }
     if (init) {
         auto draw_future = std::async(std::launch::async, [&]() { save_map(image); });
     }
@@ -717,6 +720,9 @@ bool asst::BattleHelper::check_in_speedup(const cv::Mat& reusable)
 bool asst::BattleHelper::check_in_battle(const cv::Mat& reusable, bool weak)
 {
     cv::Mat image = reusable.empty() ? m_inst_helper.ctrler()->get_image() : reusable;
+    if (battle_interrupted(image)) {
+        return false;
+    }
     if (weak) {
         BattlefieldMatcher analyzer(image);
         auto result = analyzer.analyze();
@@ -757,6 +763,9 @@ bool asst::BattleHelper::wait_until_start(bool weak)
 
     cv::Mat image = m_inst_helper.ctrler()->get_image();
     while (!m_inst_helper.need_exit() && !check_in_battle(image, weak)) {
+        if (battle_interrupted(image)) {
+            return false;
+        }
         if (std::chrono::steady_clock::now() - start_time > timeout_duration) {
             Log.warn("Timeout reached while waiting to start the battle.");
             return false;
@@ -798,7 +807,14 @@ bool asst::BattleHelper::use_all_ready_skill(const cv::Mat& reusable)
     bool used = false;
     const auto now = std::chrono::steady_clock::now();
     const cv::Mat image = reusable.empty() ? m_inst_helper.ctrler()->get_image() : reusable;
+    if (battle_interrupted(image)) {
+        return false;
+    }
+    const bool was_in_battle = m_in_battle;
     for (const auto& [oper_tag, loc] : m_battlefield_opers) {
+        if (was_in_battle && !m_in_battle) {
+            break;
+        }
         const auto& skill_it = std::ranges::find_if(m_skill_usage, [&](const auto& pair) {
             return (pair.first.role == battle::Role::Unknown || pair.first.role == oper_tag.role) &&
                    pair.first.name == oper_tag.name;
@@ -1017,7 +1033,7 @@ bool asst::BattleHelper::click_skill(int timeout_ms)
     int retry = 0;
     while (!m_inst_helper.need_exit()) {
         image = m_inst_helper.ctrler()->get_image();
-        if (retry > 0 && (retry % 10 == 0) && !check_in_battle(image)) {
+        if (battle_interrupted(image) || (retry > 0 && retry % 10 == 0 && !check_in_battle(image))) {
             return false;
         }
         top_view = get_top_view(image, true, m_has_multi_stages);

@@ -110,7 +110,9 @@ bool asst::CopilotTask::set_params(const json::value& params)
     }
     const bool use_copilot_list = !filename_opt && multi_tasks_opt.has_value();
     const bool continue_on_two_stars = use_copilot_list && params.get("continue_on_two_stars", false);
-    const bool manage_battle_result = max_failure_retries.has_value() || continue_on_two_stars;
+    const bool retry_on_failure = params.get("retry_on_failure", max_failure_retries.has_value());
+    const bool retry_on_leak = params.get("retry_on_leak", false);
+    const bool manage_battle_result = retry_on_failure || retry_on_leak || continue_on_two_stars;
 
     if (filename_opt) {
         m_multi_copilot_plugin_ptr->set_enable(false);
@@ -248,7 +250,9 @@ bool asst::CopilotTask::set_params(const json::value& params)
     const int loop_times = params.get("loop_times", 1);
     m_use_copilot_list = use_copilot_list;
     m_continue_on_two_stars = continue_on_two_stars;
-    m_max_failure_retries = max_failure_retries;
+    m_retry_on_failure = retry_on_failure;
+    m_max_retries = max_failure_retries.value_or(1);
+    m_battle_task_ptr->set_retry_on_leak(retry_on_leak);
     m_managed_stage_count = 0;
     m_stop_task_ptr->set_enable(false);
     if (manage_battle_result) {
@@ -305,24 +309,27 @@ bool asst::CopilotTask::run_managed_stage(size_t index, std::vector<bool>& skipp
             return false;
         }
 
-        ProcessTask settlement(*this, { "Copilot@WaitForBattleResult" });
-        if (!settlement.run() || need_exit()) {
-            return false;
+        const bool enemy_leaked = m_battle_task_ptr->enemy_leaked();
+        std::string result;
+        if (!enemy_leaked) {
+            ProcessTask settlement(*this, { "Copilot@WaitForBattleResult" });
+            if (!settlement.run() || need_exit()) {
+                return false;
+            }
+            result = settlement.get_last_task_name();
         }
-        const auto& result = settlement.get_last_task_name();
-        const bool failed = result == Failed || result == FailureConfirmed;
+        const bool failed = enemy_leaked || result == Failed || result == FailureConfirmed;
         const bool two_stars = result == TwoStars;
         if (!failed && !two_stars && result != ThreeStars && result != Adverse && result != Sandbox) {
             LogError << __FUNCTION__ << "Could not recognize the battle result" << result;
             return false;
         }
-        if ((failed && !m_max_failure_retries) || (two_stars && config && !m_continue_on_two_stars)) {
+        if ((failed && !enemy_leaked && !m_retry_on_failure) || (two_stars && config && !m_continue_on_two_stars)) {
             return false;
         }
-        const bool retry =
-            failed && (*m_max_failure_retries == 0 || retries < static_cast<std::uint64_t>(*m_max_failure_retries));
+        const bool retry = failed && (m_max_retries == 0 || retries < static_cast<std::uint64_t>(m_max_retries));
 
-        if (config || failed || index + 1 < m_managed_stage_count) {
+        if (!enemy_leaked && (config || failed || index + 1 < m_managed_stage_count)) {
             ProcessTask return_to_stage(*this, { "Copilot@ClickCornerUntilStartButton" });
             return_to_stage.set_times_limit("Copilot@ClickCornerUntilStartButton", 15);
             if (!return_to_stage.run() || need_exit()) {
@@ -352,6 +359,7 @@ bool asst::CopilotTask::run_managed_stage(size_t index, std::vector<bool>& skipp
             details["id"] = config ? config->id : -1;
             details["stage_name"] = config ? config->nav_name : m_stage_name;
             details["stars"] = failed ? 0 : two_stars ? 2 : 3;
+            details["enemy_leaked"] = enemy_leaked;
             details["retry_number"] = retry ? retries + 1 : 0;
             details["skipped_raid_ids"] = std::move(skipped_raid_ids);
             callback(AsstMsg::SubTaskExtraInfo, info);

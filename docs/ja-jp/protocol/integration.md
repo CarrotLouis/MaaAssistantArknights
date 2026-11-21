@@ -1220,7 +1220,18 @@ Sarkaz テーマ、Investment モード、 ｢破棘成金分隊｣ または �
 ::: field max_failure_retries  
 @type number  
 @optional  
-作戦失敗（星 0）の確認後に各ステージを再試行する回数。省略すると無効、0 は無制限です。マルチジョブモードでは、上限に達すると残りのジョブを実行します。  
+ステージごとに共用する追加再試行回数。既定値は 1 で、0 は無制限です。この項目だけを指定した場合は、従来どおり星 0 の失敗を再試行します。  
+:::  
+::: field retry_on_failure  
+@type boolean  
+@optional  
+星 0 の失敗を確認した場合に再試行します。省略時は max_failure_retries が指定されていれば有効です。  
+:::  
+::: field retry_on_leak  
+@type boolean  
+@default false  
+@optional  
+敵の通過を検出したら一時停止し、作戦を放棄します。星 0 の失敗と回数を共有し、上限に達した場合はマルチジョブの残りを実行します。  
 :::  
 ::: field continue_on_two_stars  
 @type boolean  

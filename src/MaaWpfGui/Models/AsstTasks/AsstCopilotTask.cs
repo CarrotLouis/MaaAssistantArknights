@@ -69,6 +69,10 @@ public class AsstCopilotTask : AsstBaseTask
 
     public int? MaxFailureRetries { get; set; }
 
+    public bool RetryOnFailure { get; set; } = true;
+
+    public bool RetryOnLeak { get; set; }
+
     public bool ContinueOnTwoStars { get; set; }
 
     /// <summary>
@@ -122,6 +126,12 @@ public class AsstCopilotTask : AsstBaseTask
         if (MaxFailureRetries is int maxFailureRetries)
         {
             taskParams["max_failure_retries"] = maxFailureRetries;
+            taskParams["retry_on_failure"] = RetryOnFailure;
+        }
+
+        if (RetryOnLeak)
+        {
+            taskParams["retry_on_leak"] = true;
         }
 
         if (FormationIndex > 0)

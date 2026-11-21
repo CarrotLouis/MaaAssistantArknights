@@ -389,6 +389,7 @@
     <system:String x:Key="Asst.Copilot.CurrentSteps">目前步驟：{0} {1}</system:String>
     <system:String x:Key="Asst.Copilot.ElapsedTime">經過時間：{0}ms</system:String>
     <system:String x:Key="Asst.Copilot.FailureRetriesExhausted">{0} 完全失敗，已用完重試次數。</system:String>
+    <system:String x:Key="Asst.Copilot.LeakRetriesExhausted">{0} 偵測到漏怪，已放棄本次作戰，重試次數已用盡。</system:String>
     <system:String x:Key="Asst.Copilot.MissingOperators">以下{key=Game.Operator}組內的{key=Game.Operator}均未擁有（每組只需其一）或未達作業要求：\n{0} ｢特別關注｣ 可能影響{key=Game.Operator}辨識，若實際已擁有，可移除 ｢特別關注｣ 後重試，或關閉 ｢{key=Copilot.AutoSquad}｣ 手動補充；若確實未擁有，僅缺一組時可使用 ｢{key=Copilot.SupportUnitUsage}｣，缺兩組以上請更換作業。</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable" xml:space="preserve">{key=Game.Operator}不可用：{0}，原因：{1}</system:String>
     <system:String x:Key="Asst.Copilot.OperUnavailable.Elite">精英化不足</system:String>
@@ -398,6 +399,7 @@
     <system:String x:Key="Asst.Copilot.Operbox1Unmatched" xml:space="preserve">{key=Game.Operator}（組） {0} 沒有匹配的{key=Game.Operator}，需要借助戰（預匹配建議 {1}，實際按助戰列表選擇）</system:String>
     <system:String x:Key="Asst.Copilot.OperboxDataParseFailed">{key=OperBox.Title}資料解析失敗</system:String>
     <system:String x:Key="Asst.Copilot.OperboxMatched">預匹配的{key=Game.Operator}（組）：</system:String>
+    <system:String x:Key="Asst.Copilot.RetryAfterLeak">{0} 偵測到漏怪，已放棄本次作戰，開始第 {1} 次重試。</system:String>
     <system:String x:Key="Asst.Copilot.RetryFailedBattle">{0} 完全失敗，開始第 {1} 次重試。</system:String>
     <system:String x:Key="Asst.Copilot.SSSGamePass">保全通關啦！</system:String>
     <system:String x:Key="Asst.Copilot.TwoStars">{0} 二星通關。</system:String>
@@ -1018,6 +1020,8 @@ C:\Program Files\Netease\MuMuPlayer
     <system:String x:Key="Copilot.PrtsPlus">自動戰鬥作業分享</system:String>
     <system:String x:Key="Copilot.RetryOnFailure">失敗自動重試</system:String>
     <system:String x:Key="Copilot.RetryOnFailure.Tip">僅在確認關卡完全失敗（0 星）後重試。多作業模式下，重試次數用完後繼續執行剩餘作業。</system:String>
+    <system:String x:Key="Copilot.RetryOnLeak">漏怪自動重試</system:String>
+    <system:String x:Key="Copilot.RetryOnLeak.Tip">辨識到漏怪後暫停並放棄本次作戰。與失敗自動重試共用次數。多作業模式下，次數用盡後繼續執行剩餘作業。</system:String>
     <system:String x:Key="Copilot.SSS">保全派駐</system:String>
     <system:String x:Key="Copilot.SelectFile.Tip">作業檔可以直接用滑鼠拖進來喔 (oﾟvﾟ)ノ</system:String>
     <system:String x:Key="Copilot.SelectTask.Tip" xml:space="preserve">左鍵：檢視作業資訊

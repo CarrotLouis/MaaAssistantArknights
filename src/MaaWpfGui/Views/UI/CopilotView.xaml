@@ -502,7 +502,13 @@
                                         </CheckBox>
                                         <controls:TooltipBlock TooltipText="{DynamicResource Copilot.RetryOnFailure.Tip}" />
                                     </StackPanel>
-                                    <StackPanel Margin="12,0,0,5" Visibility="{c:Binding RetryOnFailure}">
+                                    <StackPanel Margin="0,5" Orientation="Horizontal">
+                                        <CheckBox MaxWidth="163" IsChecked="{Binding RetryOnLeak}">
+                                            <TextBlock Text="{DynamicResource Copilot.RetryOnLeak}" TextWrapping="Wrap" />
+                                        </CheckBox>
+                                        <controls:TooltipBlock TooltipText="{DynamicResource Copilot.RetryOnLeak.Tip}" />
+                                    </StackPanel>
+                                    <StackPanel Margin="12,0,0,5" Visibility="{c:Binding 'RetryOnFailure or RetryOnLeak'}">
                                         <controls:TextBlock Text="{DynamicResource Copilot.MaxFailureRetries}" TextWrapping="Wrap" />
                                         <hc:NumericUpDown
                                             Width="84"

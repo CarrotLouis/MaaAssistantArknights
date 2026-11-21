@@ -1220,7 +1220,18 @@ Tag 等级（大于等于 3）和对应的希望招募时限，单位为分钟�
 ::: field max_failure_retries  
 @type number  
 @optional  
-确认完全失败（0 星）后，每个关卡允许的额外重试次数。省略此参数时关闭重试，0 表示无限重试。多作业模式下，重试次数用完后继续执行剩余作业。  
+单关卡共用的额外重试次数。0 表示无限重试，默认 1。只提供此参数时，兼容旧接口的 0 星失败重试行为。  
+:::  
+::: field retry_on_failure  
+@type boolean  
+@optional  
+是否在确认 0 星失败后重试。未提供时，若设置了 max_failure_retries，则启用 0 星失败重试。  
+:::  
+::: field retry_on_leak  
+@type boolean  
+@default false  
+@optional  
+是否在检测到漏怪后暂停并放弃本次作战。与 0 星失败共用重试次数。多作业模式下，次数用尽后继续执行剩余作业。  
 :::  
 ::: field continue_on_two_stars  
 @type boolean  

@@ -1221,7 +1221,18 @@ Tag 等級（大於等於 3）對應的期望招募時限（單位：分鐘）�
 ::: field max_failure_retries  
 @type number  
 @optional  
-確認完全失敗（0 星）後，每個關卡允許的額外重試次數。省略此參數時關閉重試，0 表示無限重試。多作業模式下，重試次數用完後繼續執行剩餘作業。  
+單關卡共用的額外重試次數。0 表示無限重試，預設為 1。僅提供此參數時，沿用舊介面的 0 星失敗重試行為。  
+:::  
+::: field retry_on_failure  
+@type boolean  
+@optional  
+確認 0 星失敗後是否重試。未提供時，若已設定 max_failure_retries，則啟用 0 星失敗重試。  
+:::  
+::: field retry_on_leak  
+@type boolean  
+@default false  
+@optional  
+偵測到漏怪後是否暫停並放棄作戰。與 0 星失敗共用重試次數。多作業模式下，次數用盡後繼續執行剩餘作業。  
 :::  
 ::: field continue_on_two_stars  
 @type boolean  

@@ -5631,6 +5631,55 @@
         "baseTask": "Copilot@EndOfAction-Sandbox",
         "next": []
     },
+    "Copilot@PauseBeforeLeakAbandon": {
+        "baseTask": "BattlePauseCancelCheck",
+        "template": "BattleOfficiallyBegin.png",
+        "action": "ClickSelf",
+        "postDelay": 200,
+        "next": [
+            "Copilot@OpenLeakAbandonPrompt",
+            "Copilot@LeakAbandonEndOfAction",
+            "Copilot@LeakAbandonFightMissionFailed"
+        ]
+    },
+    "Copilot@OpenLeakAbandonPrompt": {
+        "baseTask": "RoguelikeBattleExitBegin",
+        "template": "RoguelikeBattleExitBegin.png",
+        "maxTimes": 4,
+        "next": [
+            "Copilot@ConfirmLeakAbandon",
+            "Copilot@LeakAbandonEndOfAction",
+            "Copilot@LeakAbandonFightMissionFailed",
+            "#self"
+        ]
+    },
+    "Copilot@ConfirmLeakAbandon": {
+        "baseTask": "NormalBattleAbandon",
+        "template": "NormalBattleAbandon.png",
+        "maxTimes": 3,
+        "next": ["Copilot@WaitAfterLeakAbandon"]
+    },
+    "Copilot@WaitAfterLeakAbandon": {
+        "algorithm": "JustReturn",
+        "maxTimes": 50,
+        "exceededNext": ["Copilot@BattleStartPreFlag", "Copilot@LeakAbandonEndOfAction"],
+        "next": [
+            "Copilot@BattleStartPreFlag",
+            "Copilot@LeakAbandonEndOfAction",
+            "Copilot@LeakAbandonFightMissionFailed",
+            "Copilot@ConfirmLeakAbandon",
+            "#self"
+        ]
+    },
+    "Copilot@LeakAbandonEndOfAction": {
+        "baseTask": "Copilot@EndOfAction",
+        "template": "EndOfAction.png",
+        "next": ["Copilot@ClickCornerUntilStartButton"]
+    },
+    "Copilot@LeakAbandonFightMissionFailed": {
+        "baseTask": "Copilot@FightMissionFailed",
+        "next": ["Copilot@WaitAfterLeakAbandon"]
+    },
     "Copilot@EndOfAction-Sandbox": {
         "algorithm": "OcrDetect",
         "text": ["MISSION", "RESULTS"],

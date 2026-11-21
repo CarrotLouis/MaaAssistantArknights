@@ -47,9 +47,10 @@ private:
     std::shared_ptr<BattleProcessTask> m_battle_task_ptr = nullptr;
     std::shared_ptr<ProcessTask> m_stop_task_ptr = nullptr;
     std::string m_stage_name;
-    std::optional<int> m_max_failure_retries;
+    int m_max_retries = 1;
     size_t m_managed_stage_count = 0;
     bool m_use_copilot_list = false;
+    bool m_retry_on_failure = false;
     bool m_continue_on_two_stars = false;
     bool m_params_locked = false;
 };

@@ -589,6 +589,14 @@ public partial class CopilotViewModel : Screen
         }
     } = ConfigFactory.CurrentConfig.Copilot.RetryOnFailure;
 
+    public bool RetryOnLeak
+    {
+        get; set {
+            SetAndNotify(ref field, value);
+            ConfigFactory.CurrentConfig.Copilot.RetryOnLeak = value;
+        }
+    } = ConfigFactory.CurrentConfig.Copilot.RetryOnLeak;
+
     public int MaxFailureRetries
     {
         get; set {
@@ -2331,7 +2339,9 @@ public partial class CopilotViewModel : Screen
                 IgnoreRequirements = IgnoreRequirements,
                 UserAdditionals = AddUserAdditional ? [.. userAdditional] : [],
                 UseSanityPotion = UseSanityPotion,
-                MaxFailureRetries = RetryOnFailure ? MaxFailureRetries : null,
+                MaxFailureRetries = RetryOnFailure || RetryOnLeak ? MaxFailureRetries : null,
+                RetryOnFailure = RetryOnFailure,
+                RetryOnLeak = RetryOnLeak,
                 ContinueOnTwoStars = ContinueOnTwoStars,
                 FormationIndex = UseFormation ? FormationIndex : 0,
                 OperBoxDataPath = EffectiveOperBoxAssist ? OperBoxAssistHelper.OperBoxDataJsonPath : string.Empty,
@@ -2389,7 +2399,9 @@ public partial class CopilotViewModel : Screen
                 UserAdditionals = AddUserAdditional ? [.. userAdditional] : [],
                 LoopTimes = Loop ? LoopTimes : 1,
                 UseSanityPotion = false,
-                MaxFailureRetries = CopilotTabIndex == 0 && RetryOnFailure ? MaxFailureRetries : null,
+                MaxFailureRetries = CopilotTabIndex == 0 && (RetryOnFailure || RetryOnLeak) ? MaxFailureRetries : null,
+                RetryOnFailure = CopilotTabIndex == 0 && RetryOnFailure,
+                RetryOnLeak = CopilotTabIndex == 0 && RetryOnLeak,
                 FormationIndex = UseFormation ? FormationIndex : 0,
                 OperBoxDataPath = EffectiveOperBoxAssist ? OperBoxAssistHelper.OperBoxDataJsonPath : string.Empty,
             };

@@ -1220,7 +1220,18 @@ Each object contains:
 ::: field max_failure_retries  
 @type number  
 @optional  
-Number of additional attempts per stage after a confirmed zero-star defeat. Omit to disable retries. Set to 0 for unlimited retries. In multi-copilot mode, the remaining jobs run when retries are exhausted.  
+Shared number of additional attempts per stage. Defaults to 1. Set to 0 for unlimited retries. Providing this field alone retains the legacy zero-star retry behavior.  
+:::  
+::: field retry_on_failure  
+@type boolean  
+@optional  
+Retry after a confirmed zero-star defeat. If omitted, providing max_failure_retries enables retries for zero-star defeats.  
+:::  
+::: field retry_on_leak  
+@type boolean  
+@default false  
+@optional  
+Pause and abandon the battle upon detecting an enemy leak. Shares the retry limit with zero-star defeats. In multi-copilot mode, continue with the remaining jobs when retries run out.  
 :::  
 ::: field continue_on_two_stars  
 @type boolean  

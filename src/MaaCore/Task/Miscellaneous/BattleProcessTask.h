@@ -18,6 +18,10 @@ public:
 
     void set_wait_until_end(bool wait_until_end) { m_need_to_wait_until_end = wait_until_end; };
 
+    void set_retry_on_leak(bool enabled) { m_retry_on_leak = enabled; }
+
+    bool enemy_leaked() const { return m_enemy_leaked; }
+
     void set_formation_task_ptr(std::shared_ptr<std::unordered_map<battle::OperNameTag, std::string>> value);
 
 protected:
@@ -26,6 +30,7 @@ protected:
     virtual AbstractTask& this_task() override { return *this; }
 
     virtual void clear() override;
+    virtual bool battle_interrupted(const cv::Mat& image) override;
 
     virtual bool
         do_derived_action([[maybe_unused]] const battle::copilot::Action& action, [[maybe_unused]] size_t index)
@@ -50,12 +55,15 @@ protected:
     bool wait_condition(const battle::copilot::Action& action);
     bool enter_bullet_time(battle::Role role, const std::string& name, const std::optional<Point>& location);
     void sleep_and_do_strategy(unsigned millisecond);
+    bool abandon_leaked_battle();
 
     battle::copilot::CombatData m_combat_data;
     std::unordered_map</*group*/ battle::OperNameTag, /*oper*/ battle::OperNameTag> m_oper_in_group;
 
     bool m_in_bullet_time = false;
     bool m_need_to_wait_until_end = false;
+    bool m_retry_on_leak = false;
+    bool m_enemy_leaked = false;
     std::shared_ptr<std::unordered_map<battle::OperNameTag, std::string>> m_formation_ptr = nullptr;
 };
 }

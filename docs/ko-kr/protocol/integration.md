@@ -1222,7 +1222,18 @@ Sarkaz 테마, Investment 모드, "연금술 분대" 또는 "지원 분대"일 �
 ::: field max_failure_retries  
 @type number  
 @optional  
-작전 실패(별 0개)가 확인된 후 스테이지별로 추가 재시도할 수 있는 횟수입니다. 생략하면 비활성화되며, 0은 무제한입니다. 다중 작업 모드에서는 재시도 횟수를 모두 쓰면 남은 작업을 실행합니다.  
+스테이지별 공유 추가 재시도 횟수입니다. 기본값은 1이며 0은 무제한입니다. 이 필드만 설정하면 기존처럼 별 0개 실패 시 재시도합니다.  
+:::  
+::: field retry_on_failure  
+@type boolean  
+@optional  
+별 0개 실패를 확인한 후 재시도합니다. 생략 시 max_failure_retries를 설정하면 활성화됩니다.  
+:::  
+::: field retry_on_leak  
+@type boolean  
+@default false  
+@optional  
+적 통과를 감지하면 일시 정지 후 작전을 포기합니다. 별 0개 실패와 횟수를 공유하며 다중 작업 모드에서는 횟수를 모두 쓰면 남은 작업을 실행합니다.  
 :::  
 ::: field continue_on_two_stars  
 @type boolean  

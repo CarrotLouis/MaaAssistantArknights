@@ -2782,7 +2782,12 @@ public class AsstProxy
                     if (stars == 0)
                     {
                         var retry = subTaskDetails.Value<long>("retry_number");
-                        var key = retry > 0 ? "Asst.Copilot.RetryFailedBattle" : "Asst.Copilot.FailureRetriesExhausted";
+                        var key = (subTaskDetails.Value<bool>("enemy_leaked"), retry > 0) switch {
+                            (true, true) => "Asst.Copilot.RetryAfterLeak",
+                            (true, false) => "Asst.Copilot.LeakRetriesExhausted",
+                            (false, true) => "Asst.Copilot.RetryFailedBattle",
+                            (false, false) => "Asst.Copilot.FailureRetriesExhausted",
+                        };
                         copilot.AddLog(LocalizationHelper.GetStringFormat(key, stage, retry), UiLogColor.Warning);
                     }
                     else if (stars == 2)
